@@ -1,12 +1,12 @@
 <template>
     <div>
-
+        处理设备报修
     </div>
 </template>
 
 <script>
     export default {
-        name:"checkin-manage"
+        name: "equ-resolve"
     }
 </script>
 
