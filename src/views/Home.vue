@@ -11,8 +11,8 @@
 </template>
 
 <script>
-    import vHeader from "@/components/v-header.vue";
-    import vAside from "@/components/v-aside.vue";
+    import vHeader from "@/components/layout/v-header.vue";
+    import vAside from "@/components/layout/v-aside.vue";
     export default {
         name: "Home",
         components: {
