@@ -4,9 +4,10 @@ import router from './router'
 import store from './store'
 import ElementUI from "element-ui"
 
-import "./assets/base.scss"
-import "./assets/mixin.scss"
+import "./assets/styles/base.scss"
+import "./assets/styles/mixin.scss"
 import "element-ui/lib/theme-chalk/index.css"
+import "@/assets/styles/normalize.css"
 
 Vue.use(ElementUI);
 Vue.config.productionTip = false

@@ -4,6 +4,7 @@
         <div class="content">
             <v-aside class="aside-bar"></v-aside>
             <main class="main">
+                <v-tab />
                 <router-view />
             </main>
         </div>
@@ -13,9 +14,11 @@
 <script>
     import vHeader from "@/components/layout/v-header.vue";
     import vAside from "@/components/layout/v-aside.vue";
+    import VTab from "../components/layout/v-tab";
     export default {
         name: "Home",
         components: {
+          VTab,
             vHeader,
             vAside
         }
@@ -39,6 +42,6 @@
     }
     .main{
         flex:1;
-        overflow-y:auto; 
+        overflow-y:auto;
     }
 </style>

@@ -125,5 +125,6 @@ export default {
 
 .menu-bar {
   height: 100%;
+  border: none;
 }
 </style>

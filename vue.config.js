@@ -5,8 +5,8 @@ module.exports = {
         sass: {
           // @/ 是 src/ 的别名
           data: `
-          @import "~@/assets/mixin.scss";
-          @import "~@/assets/base.scss";
+          @import "~@/assets/styles/mixin.scss";
+          @import "~@/assets/styles/base.scss";
           `
         }
       }
