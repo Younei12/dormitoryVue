@@ -28,8 +28,8 @@
 
         <!-- 一级选项 -->
         <el-menu-item v-else :index="menu.index" :key="menu.index">
+          <i class="el-icon-star-on"></i>
           <template v-slot:title>
-            <i class="el-icon-star-on"></i>
             <span>{{menu.title}}</span>
           </template>
         </el-menu-item>
@@ -43,6 +43,7 @@ export default {
   name: "v-aside",
   data() {
     return {
+      collapse:false,
       menuList: [
         {
           title: "系统首页",
@@ -112,7 +113,12 @@ export default {
   computed: {
     Router() {
       return this.$route.path.replace("/", "");
-    }
+    },
+  },
+  mounted() {
+    window.onload = window.onresize = () => {
+        this.collapse = document.body.clientWidth<992;
+    };
   }
 };
 </script>

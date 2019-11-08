@@ -1,16 +1,13 @@
 <template>
   <div class="tag-bar">
     <ul class="tag-list">
-      <router-link
-        class="tag-item"
-        :class="{'active': isActive(item.path)}"
-        v-for="(item,index) in tagsList"
-        :key="item.path"
-        :to="item.path"
-      >
-        <span class="tag-name">{{item.title}}</span>
-        <i class="el-icon-close close-btn"></i>
-      </router-link>
+      <li class="tag-item" :class="{'active': isActive(item.path)}" v-for="(item,index) in tagsList"
+          :key="item.path">
+        <router-link :to="item.path" class="tag-name">
+          {{item.title}}
+        </router-link>
+        <i class="el-icon-close close-btn" @click.stop="closeTag(index)"></i>
+      </li>
     </ul>
   </div>
 </template>
@@ -19,7 +16,7 @@
   import bus from "../common/bus";
 
   export default {
-    name: "v-tab",
+    name: "v-tabs",
     props: {},
     data() {
       return {
@@ -31,7 +28,6 @@
         return path === this.$route.fullPath;
       },
       setTags(route) {
-        console.log(route)
         let isExist = this.tagsList.some(item => {
           return item.path === route.fullPath;
         });
@@ -48,8 +44,9 @@
             title: route.meta.title
           });
         }
-        // 出发设置标签事件
-        bus.$emit('set:tag', this.tagsList);
+        // 触发设置标签事件
+        bus.$emit('change:tags', this.tagsList);
+        this.ex.setItem('tags',this.tagsList);
       },
       closeTag(index) {
         // 关闭页面，如果关闭的是当前页，跳到下一个标签页，如果当前页是最后一页，这跳到前一个标签页
@@ -67,6 +64,8 @@
           this.$router.push("/");
         }
 
+        bus.$emit('change:tags', this.tagsList);
+        this.ex.setItem('tags',this.tagsList);
       }
     },
     watch: {
@@ -74,7 +73,13 @@
         handler(newRoute) {
           this.setTags(newRoute);
         },
-        immediate: true
+        // immediate: true
+      }
+    },
+    created() {
+      let tags = this.ex.getItem('tags');
+      if (tags){
+        this.tagsList = tags;
       }
     }
   }
@@ -83,29 +88,37 @@
 <style lang="scss" scoped>
   .tag-bar {
     background-color: #2c3a4e;
-    font-size: 0.66rem;
+    font-size: 15px;
     transition: all 0.2s;
   }
 
   .tag-list {
     display: flex;
+    /*min-width: 1300px;*/
+    background-color: #2c3a4e;
   }
 
   .tag-item {
-    height: 1.8rem;
-    display: flex;
-    align-items: center;
-    padding: 0 0 0 0.8rem;
+    color: #8b9aa1;
+    position: relative;
     cursor: pointer;
-    box-sizing: border-box;
-    transition: all 0.2s;
-    color: #7b8f99;
+
+    .tag-name {
+      transition: all 0.2s;
+      padding: 0 42px 0 18px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
 
     &:hover {
       background-color: #39495f;
     }
 
-    &:hover .tag-name{
+    &:hover .tag-name {
       color: #d6e1e7
     }
 
@@ -117,18 +130,14 @@
       color: #f6fcff;
     }
 
-    /*&:last-of-type{*/
-    /*  margin-right: 0;*/
-    /*}*/
   }
 
-  .tag-name {
-    margin-right: 10px;
-    transition: all 0.2s;
-  }
-
-  .close-btn{
-    padding: 0.5rem 0.5rem 0.5rem 0.8rem;
+  .close-btn {
+    padding: 0.5rem;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .close-btn:hover {
