@@ -1,11 +1,10 @@
 <template>
   <div class="home">
-    <v-header class="header" @click:logo="collapse = !collapse"></v-header>
+    <v-header @click:logo="collapse = !collapse" class="header"></v-header>
     <div class="body">
-      <v-aside class="aside-bar overflow-hidden"
-               :class="[{'aside-collapse':collapse},{'position-absolute':small_width},{'aside-shadow':small_width}]"
-               style="z-index: 999"
-      ></v-aside>
+      <v-aside :class="[{'aside-collapse':collapse},{'position-absolute':small_width},{'aside-shadow':small_width}]"
+               class="aside-bar overflow-hidden"
+               style="z-index: 999"/>
       <main class="main">
         <v-tabs class="hidden-xs-only"/>
         <section class="content">
@@ -20,6 +19,7 @@
   import vHeader from "@/components/layout/v-header.vue";
   import vAside from "@/components/layout/v-aside.vue";
   import VTabs from "../components/layout/v-tabs";
+  import {mapActions} from "vuex";
 
   export default {
     name: "Home",
@@ -34,10 +34,14 @@
         small_width: false
       }
     },
+    methods: {
+      ...mapActions(["getUserInfo"])
+    },
     mounted() {
       window.onload = window.onresize = () => {
-        this.collapse = this.small_width = document.body.clientWidth<1025;
+        this.collapse = this.small_width = document.body.clientWidth < 1025;
       };
+      this.getUserInfo();
     }
   };
 </script>
@@ -66,6 +70,7 @@
     display: flex;
     flex-direction: column;
     transition: all 0.2s;
+    width: 0;
   }
 
   .content {
@@ -78,7 +83,7 @@
     width: 0;
   }
 
-  .aside-shadow{
+  .aside-shadow {
     box-shadow: 3px 7px 15px rgba(74, 83, 97, 0.8);
   }
 </style>

@@ -13,7 +13,8 @@
 </template>
 
 <script>
-  import bus from "../common/bus";
+  import bus from "../../utils/bus";
+  import localforage from "localforage"
 
   export default {
     name: "v-tabs",
@@ -46,7 +47,7 @@
         }
         // 触发设置标签事件
         bus.$emit('change:tags', this.tagsList);
-        this.ex.setItem('tags',this.tagsList);
+        localforage.setItem('tags',this.tagsList);
       },
       closeTag(index) {
         // 关闭页面，如果关闭的是当前页，跳到下一个标签页，如果当前页是最后一页，这跳到前一个标签页
@@ -61,11 +62,11 @@
           delItem.path === this.$route.fullPath && this.$router.push(showItem.path);
         } else {
           // 关闭后没有页面可以显示，跳到首页
-          this.$router.push("/");
+          this.$router.push("/main");
         }
 
         bus.$emit('change:tags', this.tagsList);
-        this.ex.setItem('tags',this.tagsList);
+        localforage.setItem('tags',this.tagsList);
       }
     },
     watch: {
@@ -73,11 +74,11 @@
         handler(newRoute) {
           this.setTags(newRoute);
         },
-        // immediate: true
+        immediate: true
       }
     },
-    created() {
-      let tags = this.ex.getItem('tags');
+    async created() {
+      let tags = await localforage.getItem('tags');
       if (tags){
         this.tagsList = tags;
       }

@@ -1,0 +1,16 @@
+{
+  "id": "1661029",
+  "name": "毕设",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "9567273",
+      "name": "building-2-fill",
+      "font_class": "building--fill",
+      "unicode": "e8f0",
+      "unicode_decimal": 59632
+    }
+  ]
+}

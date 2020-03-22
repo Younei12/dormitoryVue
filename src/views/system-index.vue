@@ -1,41 +1,50 @@
 <template>
   <div>
     <!-- 头部 -->
-    <el-row type="flex" class="header margin-top-40 flex-wrap">
+    <el-row class="header margin-top-40 flex-wrap" style="height: 192px" type="flex">
       <!-- 左侧用户卡片 -->
-      <el-col :xs="22" :sm="8" :lg="7" :offset="1">
+      <el-col :lg="7" :offset="1" :sm="8" :xs="22">
         <el-card class="user-card">
           <section class="flex flex-column justify-between">
             <div class="flex">
-              <img class="user_avatar"
+              <img :src="userInfo.avatar"
                    alt="avatar"
-                   src="https://ossweb-img.qq.com/images/lol/web201310/skin/big22000.jpg"/>
+                   class="user_avatar"/>
               <div class="margin-left-20 flex flex-column justify-center">
-                <p class="margin-bottom-10 font-size-22">Admin</p>
-                <p class="font-size-12 color-grey">超级管理员</p>
+                <p class="margin-bottom-10 font-size-22">{{userInfo.name}}</p>
+                <p class="font-size-12 color-grey">{{userInfo.identity_name}}</p>
               </div>
             </div>
 
-            <div>
-              <p class="font-size-14 margin-bottom-10 margin-top-20">上次登录时间：2019/05/06</p>
-              <p class="font-size-14">上次登录IP：222.25.63.8</p>
+            <div class="info-section tip-small">
+              <section v-if="userInfo.identity === 1">
+                <p class="info-para">当前学生总数：{{userInfo.student_count}} 人</p>
+                <p class="info-para">当前宿舍总数：{{userInfo.dorm_count}} 间</p>
+              </section>
+              <section v-if="userInfo.identity === 2">
+                <p class="info-para">我的宿舍：{{userInfo.dorm_num || '您还未被分配宿舍'}}</p>
+              </section>
+              <section v-if="userInfo.identity === 3">
+                <p class="info-para">已接手的报修单：{{userInfo.ongoing_task}}</p>
+              </section>
+
             </div>
           </section>
         </el-card>
       </el-col>
 
-      <el-col :xs="22" :sm="13" :lg="12" class="flex" :offset="1">
+      <el-col :lg="12" :offset="1" :sm="13" :xs="22" class="flex">
         <!-- 右侧状态 -->
-        <el-row type="flex" class="flex-wrap align-content-between" :gutter="20">
-          <el-col class="status-item" v-for="(item,index) in status_list" :xs="24" :sm="12" :key="index">
+        <el-row :gutter="20" class="flex-wrap align-content-between" type="flex">
+          <el-col :key="index" :sm="12" :xs="24" class="status-item" v-for="(item,index) in status_list">
             <el-card :body-style="{ padding: '0px'}">
               <div class="status-card">
-                <div class="status-icon flex flex-center" :style="{'background-color':item.color}">
+                <div :style="{'background-color':item.color}" class="status-icon flex flex-center">
                   <i :class="[item.icon]"></i>
                 </div>
                 <div class="flex-1 flex-center flex text-center">
                   <div>
-                    <p class="font-bold font-size-22 margin-bottom-5">{{item.value}}</p>
+                    <p class="font-bold font-size-22 margin-bottom-5">{{homeInfo[item.prop]}}</p>
                     <p class="font-size-14">{{item.title}}</p>
                   </div>
                 </div>
@@ -50,13 +59,13 @@
     <!-- 头部结束 -->
 
     <!-- 图表 -->
-    <el-row type="flex" class="flex-wrap margin-top-60">
-      <el-col :xs="22" :sm="10" :lg="9" :offset="1" class="margin-bottom-20">
-        <div id="equ-chart" class="home-charts" ref="equChart"></div>
+    <el-row class="flex-wrap margin-top-60" type="flex">
+      <el-col :lg="9" :offset="1" :sm="10" :xs="22" class="margin-bottom-20">
+        <div class="home-charts" id="equ-chart" ref="equChart"></div>
       </el-col>
 
-      <el-col :xs="22" :sm="10" :lg="9" :offset="1" class="margin-bottom-20">
-        <div id="visit-chart" class="home-charts" ref="visitChart"></div>
+      <el-col :lg="9" :offset="1" :sm="10" :xs="22" class="margin-bottom-20">
+        <div class="home-charts" id="visit-chart" ref="visitChart"></div>
       </el-col>
     </el-row>
     <!-- 图表结束 -->
@@ -65,7 +74,9 @@
 
 <script>
   import echarts from "echarts";
-  import e_theme from "@/assets/theme/echarts/macarons"
+  import e_theme from "@/assets/theme/echarts/macarons";
+  import {mapState} from "vuex";
+  import request from "@/api";
 
   export default {
     name: "system-index",
@@ -74,41 +85,56 @@
         status_list: [{
           color: "#409EFF",
           icon: "el-icon-s-custom",
-          value: "3596 / 5000",
-          title: "在住人数 / 总床位"
+          title: "在住人数 / 总容纳人数",
+          prop: 'resideCount'
         }, {
           color: "#F56C6C",
           icon: "el-icon-s-flag",
-          value: "200",
-          title: "离校登记人数"
+          title: "离校登记人数",
+          prop: 'leaveSchoolCount'
         }, {
           color: "#67C23A",
           icon: "el-icon-s-help",
-          value: "200",
-          title: "设备报修单"
+          title: "待处理的设备报修单",
+          prop: 'repairCount'
         }, {
           color: "#E6A23C",
           icon: "el-icon-s-grid",
-          value: "3596 / 5000",
-          title: "空床位"
-        }]
+          title: "空床位",
+          prop: 'emptyCount'
+        }],
+        homeInfo: {
+          last7Days: [],
+          last7DaysRepair: [],
+          resideStatus: []
+        }
       }
     },
-    methods:{
-      setChart(){
-        console.log("resize")
+    computed: {
+      ...mapState(['userInfo'])
+    },
+    methods: {
+      getHomeInfo() {
+        request.post('/api/common/getHomeInfo').then(res => {
+          const data = res.data.data;
+          data.resideCount = data.resideNum + ' / ' + data.containerCount;
+          this.homeInfo = data;
+          this.setChart();
+        })
+      },
+      setChart() {
         echarts.registerTheme('macarons', e_theme);
         let equChart = echarts.init(this.$refs.equChart, 'macarons');
         equChart.setOption({
-          title:{
-            text:"近7天设备报修量",
-            bottom:"5px",
-            left:"center"
+          title: {
+            text: "近7天设备报修量",
+            bottom: "5px",
+            left: "center"
           },
           tooltip: {
             trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-              type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            axisPointer: {    // 坐标轴指示器，坐标轴触发有效
+              type: 'shadow'  // 默认为直线，可选为：'line' | 'shadow'
             }
           },
           grid: {
@@ -120,9 +146,12 @@
           xAxis: [
             {
               type: 'category',
-              data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              data: this.homeInfo.last7Days,
               axisTick: {
                 alignWithLabel: true
+              },
+              axisLabel: {
+                interval: 0
               }
             }
           ],
@@ -133,81 +162,68 @@
           ],
           series: [
             {
-              name: '直接访问',
+              name: '报修数量',
               type: 'bar',
-              barWidth: '60%',
-              data: [10, 52, 200, 334, 390, 330, 220]
+              barWidth: '50%',
+              data: this.homeInfo.last7DaysRepair
             }
           ]
         });
 
         let visitChart = echarts.init(this.$refs.visitChart, 'macarons');
         visitChart.setOption({
-          title:{
-            text:"近7天访问量",
-            bottom:"5px",
-            left:"center"
+          title: {
+            text: "学生居住状态",
+            bottom: "5px",
+            left: "center"
           },
           tooltip: {
-            trigger: 'axis'
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
           },
-          legend: {
-            data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
-          },
-          grid: {
-            left: '10px',
-            right: '20px',
-            bottom: '40px',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一','周二','周三','周四','周五','周六','周日']
-          },
-          yAxis: {
-            type: 'value'
-          },
+          // legend: {
+          //   data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎'],
+          //   top: '10px'
+          // },
+          // grid: {
+          //   left: '10px',
+          //   right: '20px',
+          //   bottom: '40px',
+          //   containLabel: true
+          // },
+          // xAxis: {
+          //   type: 'category',
+          //   boundaryGap: false,
+          //   data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          // },
+          // yAxis: {
+          //   type: 'value'
+          // },
           series: [
             {
-              name:'邮件营销',
-              type:'line',
-              stack: '总量',
-              data:[120, 132, 101, 134, 90, 230, 210]
-            },
-            {
-              name:'联盟广告',
-              type:'line',
-              stack: '总量',
-              data:[220, 182, 191, 234, 290, 330, 310]
-            },
-            {
-              name:'视频广告',
-              type:'line',
-              stack: '总量',
-              data:[150, 232, 201, 154, 190, 330, 410]
-            },
-            {
-              name:'直接访问',
-              type:'line',
-              stack: '总量',
-              data:[320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-              name:'搜索引擎',
-              type:'line',
-              stack: '总量',
-              data:[820, 932, 901, 934, 1290, 1330, 1320]
+              name: '居住状态',
+              type: 'pie',
+              radius: '60%',
+              center: ['50%', '50%'],
+              data: this.homeInfo.resideStatus.sort(function (a, b) {
+                return a.value - b.value;
+              }),
+              roseType: 'radius',
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200;
+              }
             }
           ]
         });
       }
     },
     mounted() {
-      setTimeout(()=>{
-        this.setChart();
-      },500);
-
+      // this.$nextTick(() => {
+      //   this.setChart();
+      // });
+      this.getHomeInfo()
     }
   }
 </script>
@@ -219,7 +235,7 @@
   }
 
   .user-card {
-
+    height: 100%;
   }
 
   .user_avatar {
@@ -251,5 +267,18 @@
     height: 330px;
     width: 100%;
     background-color: #f2f2f2;
+  }
+
+  .info-section {
+    margin-top: 20px;
+  }
+
+  .info-para {
+    font-size: 14px;
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 </style>
