@@ -87,15 +87,14 @@
 
 ```bash
 $ npm i
-$ npm run dev
+$ npm run serve
 $ open http://localhost:7415/
 ```
 
-## 部署
+## 构建部署
 
 ```bash
-$ npm start
-$ npm stop
+$ npm run build
 ```
 
 ## 最后
