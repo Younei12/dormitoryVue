@@ -20,10 +20,10 @@
           <el-tooltip content="学生宿舍管理">
             <el-button @click="showAssignDorm(scope.row)" circle icon="el-icon-office-building font-size-16" plain size="mini"/>
           </el-tooltip>
-          <el-tooltip content="编辑信息">
+          <el-tooltip content="编辑信息" v-if="edit">
             <el-button @click="showModifyStudent(scope.row)" circle icon="el-icon-edit font-size-16" plain size="mini"/>
           </el-tooltip>
-          <el-tooltip content="删除">
+          <el-tooltip content="删除" v-if="del">
             <el-button @click="deleteStudent(scope.row)"
                        circle
                        icon="el-icon-delete font-size-16"
@@ -74,7 +74,9 @@
         defualt: () => []
       },
       total: Number,
-      curPage: Number
+      curPage: Number,
+      edit:Boolean,
+      del:Boolean
     },
     data() {
       return {

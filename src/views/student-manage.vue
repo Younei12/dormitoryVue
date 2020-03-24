@@ -44,6 +44,8 @@
                    @current-change="curPageChange"
                    @select:students="onSelectStudents"
                    @update="getData"
+                   edit
+                   del
                    class="margin-top-20 width-full"/>
 
     <!-- 错误表格 -->

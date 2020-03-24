@@ -33,7 +33,10 @@
         <el-form-item>
           <div class="flex-center flex-column">
             <!--<p class="user-type__title">请选择用户类型</p>-->
-            <el-radio-group class="user-type-radio__group" text-color="" v-model="form.identity">
+            <el-radio-group @change="onChangeUserType"
+                            class="user-type-radio__group"
+                            text-color=""
+                            v-model="form.identity">
               <el-radio :label="2">学生</el-radio>
               <el-radio :label="1">管理员</el-radio>
               <el-radio :label="3">维修员</el-radio>
@@ -57,13 +60,13 @@
       return {
         isLoading: false,
         form: {
-          account: "",
-          password: "",
+          account: "admin",
+          password: "123456",
           identity: 1
         },
         rules: {
-          account: [{required: true, message: "请输入用户名", trigger: 'change'}],
-          password: [{required: true, message: "请输入密码", trigger: 'change'}]
+          account: [{required: true, message: "请输入用户名", trigger: 'blur'}],
+          password: [{required: true, message: "请输入密码", trigger: 'blur'}]
         }
       }
     },
@@ -90,6 +93,22 @@
           }
         } catch (err) {
           return false
+        }
+      },
+      onChangeUserType(v) {
+        switch (v) {
+          case 1:
+            this.form.account = "admin";
+            this.form.password = "123456";
+            break;
+          case 2:
+            this.form.account = "";
+            this.form.password = "";
+            break;
+          case 3:
+            this.form.account = "repairmen";
+            this.form.password = "123456";
+            break;
         }
       }
     }
