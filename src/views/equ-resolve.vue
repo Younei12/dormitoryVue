@@ -68,22 +68,31 @@
                          size="mini"
                          type="primary"/>
             </el-tooltip>
-            <el-tooltip content="已完成" v-if="scope.row.repair_status === 1">
-              <el-button @click="setDone(scope.row)"
-                         circle
-                         icon="el-icon-check font-size-16"
-                         plain
-                         size="mini"
-                         type="success"/>
-            </el-tooltip>
-            <el-tooltip content="另约时间" v-if="scope.row.repair_status === 1">
-              <el-button @click="setAnotherTime(scope.row)"
-                         circle
-                         icon="el-icon-refresh-right font-size-16"
-                         plain
-                         size="mini"
-                         type="warning"/>
-            </el-tooltip>
+            <div v-if="scope.row.repair_status === 1">
+              <div v-if="scope.row.repairmen_id&&scope.row.repairmen_id._id === userInfo.userId">
+                <el-tooltip content="已完成">
+                  <el-button @click="setDone(scope.row)"
+                             circle
+                             icon="el-icon-check font-size-16"
+                             plain
+                             size="mini"
+                             type="success"/>
+                </el-tooltip>
+                <el-tooltip content="另约时间">
+                  <el-button @click="setAnotherTime(scope.row)"
+                             circle
+                             icon="el-icon-refresh-right font-size-16"
+                             plain
+                             size="mini"
+                             type="warning"/>
+                </el-tooltip>
+              </div>
+              <div v-else class="tip-small">
+                {{scope.row.repairmen_id.repairmen_name}}正在处理
+              </div>
+
+            </div>
+
           </div>
 
           <el-tooltip content="删除" v-if="scope.row.repair_status === 2">
@@ -179,12 +188,13 @@
           this.request.post('/api/repair/startHandlerRepairForm', data).then(res => {
             if (!res.data.errcode) {
               this.$alert('操作成功！', '提示', {type: "success"});
-              this.getData();
             } else {
               this.$alert(res.data.msg, '错误', {type: "error"});
             }
+            this.getData();
           })
-        }).catch(()=>{});
+        }).catch(() => {
+        });
       },
       setDone(row) {
         const data = {id: row._id};
@@ -192,12 +202,13 @@
           this.request.post('/api/repair/repairFormDone', data).then(res => {
             if (!res.data.errcode) {
               this.$alert('操作成功！', '提示', {type: "success"});
-              this.getData();
             } else {
               this.$alert(res.data.msg, '错误', {type: "error"});
             }
+            this.getData();
           })
-        }).catch(()=>{});
+        }).catch(() => {
+        });
       },
       setAnotherTime(row) {
         const data = {id: row._id};
@@ -205,12 +216,13 @@
           this.request.post('/api/repair/makeRepairFormAnotherTime', data).then(res => {
             if (!res.data.errcode) {
               this.$alert('操作成功！', '提示', {type: "success"});
-              this.getData();
             } else {
               this.$alert(res.data.msg, '错误', {type: "error"});
             }
+            this.getData();
           })
-        }).catch(()=>{});
+        }).catch(() => {
+        });
       },
       delForm(row) {
         const data = {id: row._id};
@@ -218,12 +230,13 @@
           this.request.post('/api/repair/delRepairForm', data).then(res => {
             if (!res.data.errcode) {
               this.$alert('删除成功！', '提示', {type: "success"});
-              this.getData();
             } else {
               this.$alert(res.data.msg, '错误', {type: "error"});
             }
+            this.getData();
           })
-        }).catch(()=>{});
+        }).catch(() => {
+        });
       }
     },
     mounted() {

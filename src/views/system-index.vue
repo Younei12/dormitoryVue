@@ -208,7 +208,7 @@
               data: this.homeInfo.resideStatus.sort(function (a, b) {
                 return a.value - b.value;
               }),
-              roseType: 'radius',
+              // roseType: 'radius',
               animationType: 'scale',
               animationEasing: 'elasticOut',
               animationDelay: function (idx) {
