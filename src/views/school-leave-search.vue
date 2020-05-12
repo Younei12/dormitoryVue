@@ -78,6 +78,10 @@
       },
       getData() {
         const form = {...this.searchForm};
+        console.log(form)
+        if(!form.timeRange){
+          form.timeRange = [undefined,undefined]
+        }
         form.page = this.paging.current;
         form.startTime = form.timeRange[0];
         form.endTime = form.timeRange[1];

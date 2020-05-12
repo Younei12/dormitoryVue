@@ -27,7 +27,7 @@
         <el-input placeholder="请输入专业" style="width: 200px;" v-model="form.student_major"/>
       </el-form-item>
       <el-form-item label="班级：" prop="student_class">
-        <el-input placeholder="请输入班级" style="width: 200px;" v-model="form.student_class"/>
+        <el-input-number placeholder="请输入班级" style="width: 200px;" controls-position="right" v-model="form.student_class"/>
       </el-form-item>
       <el-form-item label="地址：" prop="student_address">
         <el-input placeholder="请输入地址" style="width: 200px;" v-model="form.student_address"/>
