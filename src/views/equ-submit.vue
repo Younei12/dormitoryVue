@@ -106,6 +106,7 @@
             if (!res.data.errcode) {
               this.$alert("提交成功，请等待维修员处理。", "提示", {type: "success"});
               this.form = initForm();
+              this.$refs.upload.clearFilesList();
             } else {
               this.$alert(res.data.msg, "错误", {type: "error"});
             }

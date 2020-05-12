@@ -17,6 +17,14 @@
               <el-option :value="2" label="女"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="宿舍号">
+            <el-input clearable
+                      placeholder="例：8#604"
+                      prefix-icon="el-icon-search"
+                      size="medium"
+                      style="width: 180px;"
+                      v-model="searchForm.dorm_num"/>
+          </el-form-item>
           <el-form-item label="居住状态">
             <el-select placeholder="全部" size="medium" style="width:100px;" v-model="searchForm.reside_status">
               <el-option :value="0" label="全部"></el-option>
@@ -97,7 +105,8 @@
         searchForm: {
           keyword: "",
           sex: 0,
-          reside_status: 0
+          reside_status: 0,
+          dorm_num:""
         },
         studentData: [],
         selectedStudents: [],
