@@ -1,10 +1,11 @@
+// 登陆页面
 <template>
   <div class="login-page flex-center">
     <main class="login-main">
       <div class="login-title">
         <i class="iconfont icon-building--fill"></i>
         <div class="login-title__name">
-          <p class="login-title__name--main">学生宿舍管理系统</p>
+          <p class="login-title__name--main">和平学校学生宿舍管理系统</p>
           <p class="login-title__name--sm">Dormitory Management System</p>
         </div>
       </div>
@@ -59,11 +60,13 @@
     data() {
       return {
         isLoading: false,
+        // 表单
         form: {
           account: "admin",
           password: "123456",
           identity: 1
         },
+        // 表单验证规则
         rules: {
           account: [{required: true, message: "请输入用户名", trigger: 'blur'}],
           password: [{required: true, message: "请输入密码", trigger: 'blur'}]
@@ -73,8 +76,10 @@
     methods: {
       async onSubmit() {
         try {
+          // 表单验证
           await this.$refs.form.validate();
           const form = this.form;
+          // 改变登录状态
           this.isLoading = true;
           try {
             const res = await this.request.post('/api/user/login', form);

@@ -5,13 +5,14 @@ import app from "@/main";
 import {logout} from "@/utils/service";
 
 let config = require('@/config.js');
-
+// axios初始化
 let request = axios.create({
   baseURL: config.baseUrl,
   timeout: 60000,
   headers: {}
 });
 
+// axios的二次封装
 request.interceptors.request.use(config => {
   if (!config.headers.token) {
     config.headers.token = localStorage.getItem("ds_token")
